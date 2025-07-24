@@ -26,4 +26,9 @@ export const ordersRepo = {
     }
     Object.assign(ORDERS[order.id], order);
   },
+  reset: async (): Promise<void> => {
+    for (const key in ORDERS) {
+      delete ORDERS[key];
+    }
+  },
 };
