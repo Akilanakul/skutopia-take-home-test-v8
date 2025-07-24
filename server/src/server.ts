@@ -12,6 +12,7 @@ import { handleGetHealthz } from './routes/probes/healthz';
 import { handleGetOrders } from './routes/handleGetOrders';
 import { handlePostOrders } from './routes/handlePostOrders';
 import { handlePostOrderBookings } from './routes/handlePostOrderBookings';
+import {handlePostOrderQuotes} from "./routes/handlePostOrderQuotes";
 
 export const startServer = () => {
   const PORT = process.env.LOCAL_TESTING_PORT || 8044;
@@ -35,7 +36,7 @@ export const startServer = () => {
   // routes
   app.get('/orders', handleGetOrders);
   app.post('/orders', handlePostOrders);
-  app.post('/orders/:id/quotes' /* TODO implement this route */);
+  app.post('/orders/:id/quotes' , handlePostOrderQuotes);
   app.post('/orders/:id/bookings', handlePostOrderBookings);
 
   app.use(errorLoggingMiddleware);
