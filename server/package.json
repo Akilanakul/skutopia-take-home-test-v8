@@ -17,6 +17,7 @@
   "scripts": {
     "start": "ts-node ./src/index.ts",
     "prettier:fix": "npx prettier --write .",
+    "lint": "eslint . --ext .ts",
     "test": "npx mocha"
   },
   "mocha": {
