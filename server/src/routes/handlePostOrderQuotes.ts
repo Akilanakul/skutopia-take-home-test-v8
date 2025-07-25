@@ -1,20 +1,44 @@
 import { Request, Response } from 'express';
 import { z } from 'zod';
 import { withAsyncErrorHandling } from './withAsyncErrorHandling';
+import { carrierCodeSchema } from '../domain/entities';
 import { ordersRepo } from '../repos/ordersRepo';
-import { deriveGenerateQuoteOutcome } from '../domain/operations/generateQuote/generateQuote.deriver';
+import {
+  generateQuote
+} from '../domain/operations/generateQuote';
 
-const requestBodySchema = z.object({
-  carriers: z.array(z.enum(['UPS', 'FEDEX', 'USPS'])),
+const generateQuoteRequestSchema = z.object({
+  carrier: carrierCodeSchema,
 });
 
+const urlParamsSchema = z.object({
+  id: z.string().nonempty(),
+});
+
+
 export const handlePostOrderQuotes = withAsyncErrorHandling(async (req: Request, res: Response) => {
-  const { id } = req.params;
-  const { carriers } = requestBodySchema.parse(req.body);
+  const  bodyParseResult  = generateQuoteRequestSchema.safeParse(req.body);
+  if (!bodyParseResult.success) {
+    res.status(400).json({
+      error: 'INVALID_REQUEST_BODY',
+      validationError: bodyParseResult.error,
+    });
+    return;
+  }
 
-  const order = await ordersRepo.getOrder(id);
+  const urlParamsParseResult = urlParamsSchema.safeParse(req.params);
+  if (!urlParamsParseResult.success) {
+    res.status(400).json({
+      error: 'INVALID_URL_PARAMETER',
+      validationError: urlParamsParseResult.error,
+    });
+    return;
+  }
 
-  const outcome = deriveGenerateQuoteOutcome(order, carriers);
+  const orderId = urlParamsParseResult.data.id;
+  const  carriers  = bodyParseResult.data.carrier;
+
+  const outcome = generateQuote(orderId, carriers);
 
   switch (outcome.outcome) {
     case 'ORDER_NOT_FOUND':
