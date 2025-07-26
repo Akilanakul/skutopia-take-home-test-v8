@@ -27,7 +27,7 @@ export const deriveGenerateQuoteOutcome = (
     return { outcome: 'ORDER_ALREADY_BOOKED' };
   }
 
-  const quotes = carriers.map((carrier) => generateQuote(order, carrier));
+  const quotes = carriers.map((carrier) => generateCarrierQuote(order, carrier));
 
   return {
     outcome: 'SUCCESS',
@@ -39,7 +39,7 @@ export const deriveGenerateQuoteOutcome = (
   };
 };
 
-export const generateQuote = (
+export const generateCarrierQuote = (
     order: Order,
     carrier: CarrierCode
 ): ShippingQuote => ({
