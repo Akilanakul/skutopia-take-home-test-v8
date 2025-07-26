@@ -15,7 +15,8 @@
       "**/*.ts"
     ],
     "spec": [
-      "api-tests/**/*.ts"
+      "api-tests/**/*.ts",
+      "server/src/domain/operations/**/*.ts"
     ],
     "exit": true,
     "timeout": 10000,
