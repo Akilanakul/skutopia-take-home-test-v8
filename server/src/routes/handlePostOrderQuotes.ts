@@ -1,5 +1,4 @@
 import { withAsyncErrorHandling } from './withAsyncErrorHandling';
-import { ordersRepo } from "../repos/ordersRepo";
 import { carrierCodeSchema } from '../domain/entities';
 import { z } from 'zod-http-schemas';
 import {
@@ -47,9 +46,5 @@ export const handlePostOrderQuotes = withAsyncErrorHandling(
         };
 
        res.status(outcomeStatusCodeMap[result.outcome]).json(result);
-
-        if (result.outcome === 'SUCCESS') {
-            await ordersRepo.updateOrder(result.order);
-        }
     }
 );

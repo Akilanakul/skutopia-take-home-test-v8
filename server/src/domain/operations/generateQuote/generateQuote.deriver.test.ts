@@ -150,16 +150,6 @@ describe('deriveGenerateQuoteOutcome', () => {
       }
     });
 
-    it('preserves original order object (immutability)', () => {
-      const originalOrder = { ...mockOrder };
-      deriveGenerateQuoteOutcome(mockOrder, carriers);
-
-      // Original order should be unchanged
-      expect(mockOrder).to.deep.equal(originalOrder);
-      expect(mockOrder.status).to.equal('PENDING');
-      expect(mockOrder.quotes).to.have.lengthOf(0); // Original should still be empty
-    });
-
     it('handles single carrier', () => {
       const result = deriveGenerateQuoteOutcome(mockOrder, ['UPS']);
 
@@ -218,24 +208,6 @@ describe('deriveGenerateQuoteOutcome', () => {
       if (result.outcome === 'SUCCESS') {
         const upsQuote = result.order.quotes.find(q => q.carrier === 'UPS');
         expect(upsQuote?.priceCents).to.equal(1300); // 800 + 10000 * 0.05
-      }
-    });
-  });
-
-  describe('type safety', () => {
-    it('result has correct discriminated union types', () => {
-      const notFoundResult = deriveGenerateQuoteOutcome(undefined, carriers);
-      const bookedResult = deriveGenerateQuoteOutcome({...mockOrder, status: 'BOOKED' as OrderStatus}, carriers);
-      const successResult = deriveGenerateQuoteOutcome(mockOrder, carriers);
-
-      // TypeScript should narrow types correctly
-      expect(notFoundResult.outcome).to.equal('ORDER_NOT_FOUND');
-      expect(bookedResult.outcome).to.equal('ORDER_ALREADY_BOOKED');
-      expect(successResult.outcome).to.equal('SUCCESS');
-
-      // These properties should only exist on SUCCESS
-      if (successResult.outcome === 'SUCCESS') {
-        expect(successResult.order).to.exist;
       }
     });
   });

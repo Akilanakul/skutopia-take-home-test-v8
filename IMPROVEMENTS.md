@@ -17,11 +17,11 @@
 import { z } from 'zod';
 
 const configSchema = z.object({
-  PORT: z.coerce.number().default(8044),
-  DATABASE_URL: z.string().default('postgresql://localhost:5432/skutopia'),
-  UPS_BASE_RATE: z.coerce.number().default(800),
-  UPS_PER_GRAM_RATE: z.coerce.number().default(0.05),
-  MAX_ITEM_WEIGHT: z.coerce.number().default(50000)
+    PORT: z.coerce.number().default(8044),
+    DATABASE_URL: z.string().default('postgresql://localhost:5432/skutopia'),
+    UPS_BASE_RATE: z.coerce.number().default(800),
+    UPS_PER_GRAM_RATE: z.coerce.number().default(0.05),
+    MAX_ITEM_WEIGHT: z.coerce.number().default(50000)
 });
 
 export const config = configSchema.parse(process.env);
@@ -58,7 +58,7 @@ const ORDERS = loadFixture<{ salesOrders: OrderInput[] }>("sales-orders.json");
 
 **Problem:** Tests currently use the same in-memory repository as the application, causing **test interference and data dependency issues**. Tests fail when run in different orders because they share state and don't clean up properly.
 
-**Solution:** Use Docker containerized database for tests with proper isolation:
+**Solution:** Use Docker containerized database for tests with proper isolation.
 
 **Benefits:** Eliminates test interdependencies, realistic database behavior, tests can run in any order, supports parallel execution.
 
@@ -68,11 +68,19 @@ const ORDERS = loadFixture<{ salesOrders: OrderInput[] }>("sales-orders.json");
 
 **Problem:** Current system has no authentication, allowing unauthorized access to order data and carrier fee calculations.
 
-**Solution:** Implement JWT-based authentication middleware:
+**Solution:** Implement JWT-based authentication middleware.
 
 **Benefits:** Prevents unauthorized access, enables user-specific data filtering, supports role-based permissions.
 
 **Tradeoffs:** Added complexity for token management and refresh, but essential for production security.
+
+### 5. Monitoring and Observability - Structured Logging and Error Handling
+
+**Problem:** Current logging lacks structure and context, making production debugging difficult when issues occur across multiple requests. Generic error responses don't provide actionable information for developers or users.
+
+**Solution:** Implement structured logging with correlation IDs and comprehensive error handling with custom error types for better debugging and user experience.
+
+**Benefits:** Easier debugging with correlation IDs, actionable error messages, business intelligence from structured logs, and improved production observability.
 
 ## Product Considerations
 
@@ -97,7 +105,7 @@ const ORDERS = loadFixture<{ salesOrders: OrderInput[] }>("sales-orders.json");
 - Are we planning to support international shipping?
 - How do we handle customs, duties, and international carrier relationships?
 
-**Product Impact:** International support significantly increases complexity but opens larger market opportunities. 
+**Product Impact:** International support significantly increases complexity but opens larger market opportunities.
 
 ### 4. Multi-Tenant Architecture
 

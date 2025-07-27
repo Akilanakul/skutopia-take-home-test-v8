@@ -8,7 +8,13 @@ export const generateQuote = async (
 ): Promise<GenerateQuoteResult> => {
     const order = await ordersRepo.getOrder(orderId);
 
-    return deriveGenerateQuoteOutcome(order, carriers);
+    const result =  deriveGenerateQuoteOutcome(order, carriers);
+
+    if (result.outcome === 'SUCCESS') {
+        await ordersRepo.updateOrder(result.order);
+    }
+
+    return result;
 };
 
 export { GenerateQuoteResult };
