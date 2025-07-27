@@ -1,4 +1,5 @@
 import {Order, OrderStatus, CarrierCode} from '../../entities';
+import {config} from './config';
 
 type OrderNotFound = {
   outcome: 'ORDER_NOT_FOUND';
@@ -58,11 +59,11 @@ export const calculateCarrierFees = (
 ): number => {
   switch (carrier) {
     case "UPS":
-      return items.reduce((acc, item) => acc + item.gramsPerItem * 0.05, 800);
+      return items.reduce((acc, item) => acc + item.gramsPerItem * config.UPS_PER_GRAM_RATE, config.UPS_BASE_RATE);
     case "USPS":
-      return items.reduce((acc, item) => acc + item.gramsPerItem * 0.02, 1050);
+      return items.reduce((acc, item) => acc + item.gramsPerItem * config.USPS_PER_GRAM_RATE, config.USPS_BASE_RATE);
     case "FEDEX":
-      return items.reduce((acc, item) => acc + item.gramsPerItem * 0.03, 1000);
+      return items.reduce((acc, item) => acc + item.gramsPerItem * config.FEDEX_PER_GRAM_RATE, config.FEDEX_BASE_RATE);
     default:
       throw new Error(`Unknown carrier: ${carrier}`);
   }

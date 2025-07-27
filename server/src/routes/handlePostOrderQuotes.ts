@@ -1,6 +1,6 @@
-import { withAsyncErrorHandling } from './withAsyncErrorHandling';
-import { carrierCodeSchema } from '../domain/entities';
-import { z } from 'zod-http-schemas';
+import {withAsyncErrorHandling} from './withAsyncErrorHandling';
+import {carrierCodeSchema} from '../domain/entities';
+import {z} from 'zod-http-schemas';
 import {
     generateQuote
 } from '../domain/operations/generateQuote';
@@ -45,6 +45,6 @@ export const handlePostOrderQuotes = withAsyncErrorHandling(
             ORDER_NOT_FOUND: 404,
         };
 
-       res.status(outcomeStatusCodeMap[result.outcome]).json(result);
+        res.status(outcomeStatusCodeMap[result.outcome]).json(result);
     }
 );
