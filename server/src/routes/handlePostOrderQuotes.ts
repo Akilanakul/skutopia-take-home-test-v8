@@ -37,14 +37,25 @@ export const handlePostOrderQuotes = withAsyncErrorHandling(
         const orderId = urlParamsParseResult.data.id;
         const carriers = bodyParseResult.data.carriers;
 
-        const result = await generateQuote(orderId, carriers);
+        try {
+            const result = await generateQuote(orderId, carriers);
 
-        const outcomeStatusCodeMap: Record<GenerateQuoteResult['outcome'], number> = {
-            SUCCESS: 200,
-            ORDER_ALREADY_BOOKED: 400,
-            ORDER_NOT_FOUND: 404,
-        };
+            const outcomeStatusCodeMap: Record<GenerateQuoteResult['outcome'], number> = {
+                SUCCESS: 200,
+                ORDER_ALREADY_BOOKED: 400,
+                ORDER_NOT_FOUND: 404,
+                QUOTE_GENERATION_FAILED: 400,
+                DATABASE_ERROR: 500,
+            };
 
-        res.status(outcomeStatusCodeMap[result.outcome]).json(result);
+            res.status(outcomeStatusCodeMap[result.outcome]).json(result);
+        } catch (error) {
+            console.error('Unexpected error in generateQuote:', error);
+            res.status(500).json({
+                error: 'INTERNAL_SERVER_ERROR',
+                message: 'An unexpected error occurred while generating quotes'
+            });
+            return;
+        }
     }
 );

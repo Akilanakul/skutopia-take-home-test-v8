@@ -6,12 +6,28 @@ export const generateQuote = async (
     orderId: Order['id'],
     carriers: CarrierCode[]
 ): Promise<GenerateQuoteResult> => {
-    const order = await ordersRepo.getOrder(orderId);
+    let order: Order | undefined;
 
-    const result =  deriveGenerateQuoteOutcome(order, carriers);
+    try {
+        order = await ordersRepo.getOrder(orderId);
+    } catch (error) {
+        return {
+            outcome: 'DATABASE_ERROR',
+            error: 'Failed to fetch order'
+        };
+    }
+
+    const result: GenerateQuoteResult = deriveGenerateQuoteOutcome(order, carriers);
 
     if (result.outcome === 'SUCCESS') {
-        await ordersRepo.updateOrder(result.order);
+        try {
+            await ordersRepo.updateOrder(result.order as Order);
+        } catch (error) {
+            return {
+                outcome: 'DATABASE_ERROR',
+                error: 'Failed to save updated order'
+            };
+        }
     }
 
     return result;
